@@ -9,7 +9,7 @@ let fakeServerData = {
     name: 'Josh',
     playlists:[
       {
-        name: 'My Favorites',
+        name: 'My Favorites', 
         songs: [
           { name:'Song 1', duration: 1345},
           { name: 'Song 2', duration: 2143},
@@ -83,15 +83,16 @@ class Filter extends Component {
 }
 
 class Playlist extends Component {
-  render() {
+  render() {  
+  let playlist = this.props.playlist  
     return(
       <div style={{...defaultStyle, width: "25%", display: 'inline-block'}}>
         <img />
-        <h3>Playlist Name</h3>
+        <h3>{playlist.name}</h3>
         <ul>
-          <li>Song 1</li>
-          <li>Song 2</li>
-          <li>Song 3</li>
+          {playlist.songs.map(song =>
+            <li>{song.name}</li>
+          )}
         </ul>
       </div>
     );
@@ -109,6 +110,29 @@ class App extends Component {
     }, 2000);
   }
   render() {
+
+    // let playlistElements = []
+    // if(this.state.serverData.user) {
+    //   for(let i=0; i < this.state.serverData.user.playlists.length; i++){
+    //     let playlist = this.state.serverData.user.playlists[i]
+    //     playlistElements.push(<Playlist playlist={playlist} />)
+    //   }
+    // }
+
+    // This is an example of how to use a for loop instead of using the .map() method
+    // {playListElements}
+
+
+    // let playlistElements = []
+    // if(this.state.serverData.user) {
+    //  this.state.serverData.user.playlists.forEach(playlist => 
+    //    playlistElements.push(<Playlist playlist={playlist} />)
+    //  )
+    // }
+
+    // This is an example of how to use a forEach method instead of using the .map() method
+    // {playListElements}
+
     return (
       <div className="App">
         { this.state.serverData.user ? 
@@ -119,10 +143,12 @@ class App extends Component {
           <PlaylistCounter playlists={this.state.serverData.user.playlists}/>
           <HoursCounter playlists={this.state.serverData.user.playlists}/>     
           <Filter/>
-          <Playlist/>
-          <Playlist/>
-          <Playlist/>
-          <Playlist/>
+
+          {this.state.serverData.user.playlists.map(playlist => 
+            <Playlist playlist={playlist} />
+          )}
+
+
         </div> : <h1 style={defaultStyle}>Loading...</h1>
 
         }        
