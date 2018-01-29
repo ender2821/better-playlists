@@ -102,12 +102,18 @@ class Playlist extends Component {
 class App extends Component {
   constructor() {
     super();
-    this.state = {serverData: {}}
+    this.state = 
+      {serverData: {},
+      filterString: ''
+    }
   }
   componentDidMount() {
     setTimeout(() => {
       this.setState({serverData: fakeServerData})
-    }, 2000);
+    }, 1000);
+    setTimeout(() => {
+      this.setState({filterString: 'Weekly'})
+    }, 2000);    
   }
   render() {
 
@@ -139,12 +145,14 @@ class App extends Component {
         <div>
           <h1 style={{...defaultStyle, 'font-size': '54px'}}>
             {this.state.serverData.user.name}'s Playlists
-          </h1>}
+          </h1>
           <PlaylistCounter playlists={this.state.serverData.user.playlists}/>
           <HoursCounter playlists={this.state.serverData.user.playlists}/>     
           <Filter/>
 
-          {this.state.serverData.user.playlists.map(playlist => 
+          {this.state.serverData.user.playlists.filter(playlist =>
+            playlist.name.includes(this.state.filerString)
+          ).map(playlist => 
             <Playlist playlist={playlist} />
           )}
 
