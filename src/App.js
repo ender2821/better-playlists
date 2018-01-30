@@ -154,8 +154,8 @@ class App extends Component {
           <HoursCounter playlists={playlistsToRender}/>     
           <Filter onTextChange={text => this.setState({filterString: text})}/>
 
-          {playlistsToRender.map(playlist => 
-            <Playlist playlist={playlist} />
+          {playlistsToRender.map((playlist, i) => 
+            <Playlist playlist={playlist} key={ `playlist-item-${ i }` } />
           )}
 
 
