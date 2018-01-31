@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
+import queryString from 'query-string';
 
 let defaultStyle = {
   color: '#000'
@@ -109,9 +110,33 @@ class App extends Component {
       }
   }
   componentDidMount() {
-    setTimeout(() => {
-      this.setState({serverData: fakeServerData})
-    }, 1000);    
+    // setTimeout(() => {
+    //   this.setState({serverData: fakeServerData})
+    // }, 1000);    
+
+    // Fake Server data
+    let parsed = queryString.parse(window.location.search);
+    console.log(parsed);
+    let accessToken = parsed.access_token;
+
+    fetch('https://api.spotify.com/v1/me', {
+      headers: {'Authorization': 'Bearer ' + accessToken}})
+    .then((response) => response.json())
+    .then(data => this.setState({serverData: {user: {name: data.display_name}}}))
+
+    fetch('https://api.spotify.com/v1/me/playlists', {
+      headers: {'Authorization': 'Bearer ' + accessToken}})
+    .then((response) => response.json())
+    .then(data => this.setState({
+      serverData: {
+        user: {
+          playlists: data.items.map(item => ({
+            name: item.name, 
+            songs: []
+          }))
+        }
+      }
+    }))
   }
   render() {
 
@@ -137,11 +162,13 @@ class App extends Component {
     // This is an example of how to use a forEach method instead of using the .map() method
     // {playListElements}
 
-    let playlistsToRender = this.state.serverData.user ? this.state.serverData.user.playlists
-      .filter(playlist =>
-        playlist.name.toLowerCase().includes(
-          this.state.filterString.toLowerCase())
-      ) : []
+    let playlistsToRender = 
+      this.state.serverData.user && 
+      this.state.serverData.user.playlists 
+        ? this.state.serverData.user.playlists.filter(playlist =>
+          playlist.name.toLowerCase().includes(
+            this.state.filterString.toLowerCase())) 
+        : []
 
     return (
       <div className="App">
@@ -150,16 +177,15 @@ class App extends Component {
           <h1 style={{...defaultStyle, 'font-size': '54px'}}>
             {this.state.serverData.user.name}'s Playlists
           </h1>
+
           <PlaylistCounter playlists={playlistsToRender}/>
           <HoursCounter playlists={playlistsToRender}/>     
           <Filter onTextChange={text => this.setState({filterString: text})}/>
-
           {playlistsToRender.map((playlist, i) => 
             <Playlist playlist={playlist} key={ `playlist-item-${ i }` } />
           )}
 
-
-        </div> : <h1 style={defaultStyle}>Loading...</h1>
+        </div> : <button onClick={()=>window.location='http://localhost:8888/login'} style={{padding: '20px', 'font-size': '20px', 'margin-top': '20px'}}>Sign in with Spotify</button>
 
         }        
       </div>
