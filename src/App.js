@@ -146,7 +146,12 @@ class App extends Component {
       let allTracksDataPromises = Promise.all(trackDataPromises)
       let playlistsPromise = allTracksDataPromises.then(trackDatas => {
         trackDatas.forEach((trackData, i) => {
-          playlists[i].trackDatas = trackData.items.map(item => item.track)
+          playlists[i].trackDatas = trackData.items
+          .map(item => item.track)
+          .map(trackData => ({
+            name: trackData.name,
+            duration: trackData.duration_ms / 1000
+          }))
         })
         return playlists
       })
@@ -158,9 +163,7 @@ class App extends Component {
         return{
           name: item.name, 
           imageUrl: item.images[1].url,
-          songs: item.trackDatas.map(trackData => ({
-            name: trackData.name
-          }))
+          songs: item.trackDatas.slice(0,3)
         }
       })
     }))
