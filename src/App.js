@@ -163,42 +163,23 @@ class App extends Component {
         return{
           name: item.name, 
           imageUrl: item.images[1].url,
-          songs: item.trackDatas.slice(0,3)
+          songs: item.trackDatas
+          //songs: item.trackDatas.slice(0,3)
         }
       })
     }))
   }
   render() {
-
-    // let playlistElements = []
-    // if(this.state.serverData.user) {
-    //   for(let i=0; i < this.state.serverData.user.playlists.length; i++){
-    //     let playlist = this.state.serverData.user.playlists[i]
-    //     playlistElements.push(<Playlist playlist={playlist} />)
-    //   }
-    // }
-
-    // This is an example of how to use a for loop instead of using the .map() method
-    // {playListElements}
-
-
-    // let playlistElements = []
-    // if(this.state.serverData.user) {
-    //  this.state.serverData.user.playlists.forEach(playlist => 
-    //    playlistElements.push(<Playlist playlist={playlist} />)
-    //  )
-    // }
-
-    // This is an example of how to use a forEach method instead of using the .map() method
-    // {playListElements}
-
     let playlistsToRender = 
       this.state.user && 
       this.state.playlists 
-        ? this.state.playlists.filter(playlist =>
-          playlist.name.toLowerCase().includes(
-            this.state.filterString.toLowerCase())) 
-        : []
+        ? this.state.playlists.filter(playlist => {
+          let matchesPlaylist = playlist.name.toLowerCase().includes(
+            this.state.filterString.toLowerCase()) 
+          let matchesSong = playlist.songs.filter(song => song.name.toLowerCase()
+            .includes(this.state.filterString.toLowerCase()))
+          return matchesPlaylist || matchesSong.length > 0 
+        }) : []
 
     return (
       <div className="App">
